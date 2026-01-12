@@ -23,8 +23,8 @@ vim.keymap.set("n", "<A-Left>", "<cmd>bprevious<cr>", { desc = "Previous buffer"
 vim.keymap.set("n", "<A-Right>", "<cmd>bnext<cr>", { desc = "Next buffer" })
 vim.keymap.set({"n", "i", "v"}, "<C-s>", "<cmd>w<cr>", { desc = "Save file" })
 vim.keymap.set("n", "<C-r><C-r>", vim.lsp.buf.rename, { desc = "Rename symbol" })
-vim.keymap.set({"n", "v"}, "<C-Up>", "H", { desc = "Top of screen" })
-vim.keymap.set({"n", "v"}, "<C-Down>", "L", { desc = "Bottom of screen" })
+vim.keymap.set({"n", "v"}, "<C-Up>", "<C-u>zz", { desc = "Scroll up half page" })
+vim.keymap.set({"n", "v"}, "<C-Down>", "<C-d>zz", { desc = "Scroll down half page" })
 
 -- Jump to next/previous statement (const, fn, struct fields)
 local statement_pattern = "^\\s*\\(pub\\s\\+\\)\\?\\(const\\|fn\\|var\\)\\s\\|^\\s*\\w\\+:"
