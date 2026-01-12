@@ -226,66 +226,71 @@ require("lazy").setup({
     end,
   },
 
-  -- LSP (Zig, TypeScript)
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = { "hrsh7th/cmp-nvim-lsp" },
-    config = function()
-      local lspconfig = require("lspconfig")
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-      -- Shared on_attach function for all LSPs
-      local on_attach = function(_, bufnr)
-        local opts = { buffer = bufnr }
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-        vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format({ async = true }) end, opts)
-        vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-        vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
-      end
-
-      -- Zig
-      lspconfig.zls.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-
-      -- TypeScript/JavaScript
-      lspconfig.ts_ls.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = {
-          typescript = {
-            inlayHints = {
-              includeInlayParameterNameHints = "all",
-              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            },
-          },
-          javascript = {
-            inlayHints = {
-              includeInlayParameterNameHints = "all",
-              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            },
-          },
-        },
-      })
-    end,
-  },
+  -- LSP configs from nvim-lspconfig (provides server definitions)
+  { "neovim/nvim-lspconfig" },
 })
+
+-- LSP Configuration (Neovim 0.11+ native API)
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+-- Shared on_attach function for all LSPs
+local on_attach = function(_, bufnr)
+  local opts = { buffer = bufnr }
+  vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+  vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+  vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+  vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+  vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+  vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+  vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+  vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format({ async = true }) end, opts)
+  vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+  vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+  vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+end
+
+-- Zig
+vim.lsp.config.zls = {
+  cmd = { "zls" },
+  filetypes = { "zig", "zir" },
+  root_markers = { "build.zig", "zls.json", ".git" },
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
+
+-- TypeScript/JavaScript
+vim.lsp.config.ts_ls = {
+  cmd = { "typescript-language-server", "--stdio" },
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    typescript = {
+      inlayHints = {
+        includeInlayParameterNameHints = "all",
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      },
+    },
+    javascript = {
+      inlayHints = {
+        includeInlayParameterNameHints = "all",
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      },
+    },
+  },
+}
+
+-- Enable LSP servers
+vim.lsp.enable({ "zls", "ts_ls" })
