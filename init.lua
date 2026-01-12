@@ -15,20 +15,6 @@ vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.updatetime = 250
 
--- Settings
-vim.g.ctrl_move_lines = 10  -- Default jump amount for Ctrl+Up/Down
-
--- Custom command to change jump amount
-vim.api.nvim_create_user_command("CtrlMove", function(opts)
-  local num = tonumber(opts.args)
-  if num and num > 0 then
-    vim.g.ctrl_move_lines = num
-    print("Ctrl move set to " .. num .. " lines")
-  else
-    print("Current: " .. vim.g.ctrl_move_lines .. " lines. Usage: :CtrlMove <number>")
-  end
-end, { nargs = "?" })
-
 -- Keymaps
 vim.keymap.set({"n", "i", "v"}, "<C-z>", "<cmd>undo<cr>", { desc = "Undo" })
 vim.keymap.set({"n", "v"}, "<C-;>", ":", { desc = "Command mode" })
@@ -37,8 +23,8 @@ vim.keymap.set("n", "<A-Left>", "<cmd>bprevious<cr>", { desc = "Previous buffer"
 vim.keymap.set("n", "<A-Right>", "<cmd>bnext<cr>", { desc = "Next buffer" })
 vim.keymap.set({"n", "i", "v"}, "<C-s>", "<cmd>w<cr>", { desc = "Save file" })
 vim.keymap.set("n", "<C-r><C-r>", vim.lsp.buf.rename, { desc = "Rename symbol" })
-vim.keymap.set({"n", "v"}, "<C-Up>", function() vim.cmd("normal! " .. vim.g.ctrl_move_lines .. "k") end, { desc = "Move up X lines" })
-vim.keymap.set({"n", "v"}, "<C-Down>", function() vim.cmd("normal! " .. vim.g.ctrl_move_lines .. "j") end, { desc = "Move down X lines" })
+vim.keymap.set({"n", "v"}, "<C-Up>", "H", { desc = "Top of screen" })
+vim.keymap.set({"n", "v"}, "<C-Down>", "L", { desc = "Bottom of screen" })
 
 -- Jump to next/previous statement (const, fn, struct fields)
 local statement_pattern = "^\\s*\\(pub\\s\\+\\)\\?\\(const\\|fn\\|var\\)\\s\\|^\\s*\\w\\+:"
